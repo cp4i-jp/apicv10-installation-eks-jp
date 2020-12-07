@@ -525,7 +525,7 @@ $ kubectl -n apic create secret generic datapower-admin-credentials --from-liter
 secret/datapower-admin-credentials created
 ```
 
-イメージ名を置換するには、 ibm-apiconnect.yaml および ibm-datapower.yaml を変更します。 ( namespace がデフォルトでない場合は、合わせて変更します)。 必要に応じて ibm-apiconnect.yaml および ibm-datapower.yaml について [カスタム・リソース (CR) テンプレート](https://github.ibm.com/cloudpak4intjp/apicv10-installation-eks-jp/tree/master/sample/cr) を参照してください。
+イメージ名を置換するには、 ibm-apiconnect.yaml および ibm-datapower.yaml を変更します。 ( namespace がデフォルトでない場合は、合わせて変更します)。 必要に応じて ibm-apiconnect.yaml および ibm-datapower.yaml について [カスタム・リソース (CR) テンプレート](https://github.com/cp4i-jp/apicv10-installation-eks-jp/tree/master/sample/cr) を参照してください。
 
 次に CRD をインストールしします。 ( ibm-apiconnect-crds.yaml は変更されていません。)
 
@@ -672,7 +672,7 @@ APIC サブシステムのカスタム・リソース ( CR ) を事前に変更�
 
 [https://www.ibm.com/support/knowledgecenter/en/SSMNED_v10/com.ibm.apic.install.doc/tapic_v10_install_kubernetes_subsys.html](https://www.ibm.com/support/knowledgecenter/en/SSMNED_v10/com.ibm.apic.install.doc/tapic_v10_install_kubernetes_subsys.html)
 
-**注 :** 必要に応じて、各サブシステムの [カスタム・リソース (CR) テンプレート](https://github.ibm.com/cloudpak4intjp/apicv10-installation-eks-jp/tree/master/sample/cr) を参照してください。
+**注 :** 必要に応じて、各サブシステムの [カスタム・リソース (CR) テンプレート](https://github.com/cp4i-jp/apicv10-installation-eks-jp/tree/master/sample/cr) を参照してください。
 
 次に、Management サブシステムの CR を apply します。
 
@@ -909,7 +909,7 @@ API Manager UI ( **https://_management-api-manager_HOSTS_/manager** ) にアク�
 
 API を呼び出した後、分析データが表示されるかどうかを確認します。
 
-**注 :** 簡単に確認したい場合は、 [サンプル API および製品](https://github.ibm.com/cloudpak4intjp/apicv10-installation-eks-jp/tree/master/sample/api)をインポートしてから、**https://_gwv6-gateway_HOSTS_/_Organazation_Name_/_Catalog_Name_/testapi/** を呼び出してください。
+**注 :** 簡単に確認したい場合は、 [サンプル API および製品](https://github.com/cp4i-jp/apicv10-installation-eks-jp/tree/master/sample/api)をインポートしてから、**https://_gwv6-gateway_HOSTS_/_Organazation_Name_/_Catalog_Name_/testapi/** を呼び出してください。
 
  ![ana1](./images/ana1.png)
 
@@ -930,7 +930,7 @@ web-mgmt
 exit
 ```
 
-以下の例のように、Ingress と Service の yaml ファイルをすべての gwv6 Pod に apply します。必要に応じて、 [サンプルの yaml file](https://github.ibm.com/cloudpak4intjp/apicv10-installation-eks-jp/tree/master/sample/webgui) を参照してください。
+以下の例のように、Ingress と Service の yaml ファイルをすべての gwv6 Pod に apply します。必要に応じて、 [サンプルの yaml file](https://github.com/cp4i-jp/apicv10-installation-eks-jp/tree/master/sample/webgui) を参照してください。
 
 ```
 $ kubectl apply -f gwv6-0_ing_webgui.yaml -n apic
