@@ -1,0 +1,448 @@
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ibm-apiconnect
+  namespace: apic
+  annotations:
+    productID: 2c717d4ecc924aa5ac345015b55492eb
+    productName: IBM API Connect Enterprise
+    productVersion: 10.0.0.0-713
+    productChargedContainers: ""
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: ibm-apiconnect
+      app.kubernetes.io/name: ibm-apiconnect
+      app.kubernetes.io/component: apiconnect-operator
+  template:
+    metadata:
+      annotations:
+        productID: 2c717d4ecc924aa5ac345015b55492eb
+        productName: IBM API Connect Enterprise
+        productVersion: 10.0.0.0-713
+        productChargedContainers: ""
+      labels:
+        name: ibm-apiconnect
+        app.kubernetes.io/name: ibm-apiconnect
+        app.kubernetes.io/component: apiconnect-operator
+    spec:
+      serviceAccountName: ibm-apiconnect
+      imagePullSecrets:
+      - name: apic-registry-secret
+      containers:
+      - name: ibm-apiconnect
+        image: 467519638150.dkr.ecr.ap-northeast-1.amazonaws.com/ibm-apiconnect-operator:olm.1.0.0.op.0.0.1.g.fdf37c3.b.v1000.n.713.t.1591903154
+        command:
+        - ibm-apiconnect
+        args:
+        - --zap-time-encoding=iso8601
+        imagePullPolicy: Always
+        env:
+        - name: WATCH_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: OPERATOR_NAME
+          value: ibm-apiconnect
+---
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  name: ibm-apiconnect
+rules:
+- apiGroups:
+  - admissionregistration.k8s.io
+  resources:
+  - mutatingwebhookconfigurations
+  - validatingwebhookconfigurations
+  verbs:
+  - '*'
+- apiGroups:
+  - certmanager.k8s.io
+  resources:
+  - clusterissuers
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - '*'
+  verbs:
+  - get
+  - list
+  - watch
+  resources:
+  - storageclasses
+- apiGroups:
+  - ""
+  resources:
+  - persistentvolumes
+  - namespace
+  - nodes
+  verbs:
+  - get
+  - list
+  - watch
+
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: ibm-apiconnect-default
+subjects:
+- kind: ServiceAccount
+  name: ibm-apiconnect
+  namespace: apic
+roleRef:
+  kind: ClusterRole
+  name: ibm-apiconnect
+  apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  creationTimestamp: null
+  name: ibm-apiconnect
+  namespace: apic
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - services
+  - services/finalizers
+  - endpoints
+  - persistentvolumeclaims
+  - events
+  - configmaps
+  - secrets
+  - endpoints
+  - replicationcontrollers
+  verbs:
+  - '*'
+- apiGroups:
+  - ""
+  resources:
+  - pods/exec
+  - pods/log
+  - pods/attach
+  - pods/portforward
+  - pods/proxy
+  - services/proxy
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+- apiGroups:
+  - operator.ibm.com
+  resources:
+  - operandrequests
+  - operandregistries
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - componentstatuses
+  - resourcequotas
+  - bindings
+  - limitranges
+  - podtemplates
+  - nodes
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - datapower.ibm.com
+  resources:
+  - datapowerservices
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  - daemonsets
+  - statefulsets
+  verbs:
+  - '*'
+- apiGroups:
+  - monitoring.coreos.com
+  resources:
+  - servicemonitors
+  verbs:
+  - get
+  - create
+- apiGroups:
+  - apps
+  resourceNames:
+  - ibm-apiconnect
+  resources:
+  - deployments/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+- apiGroups:
+  - ""
+  - apps
+  resources:
+  - replicasets
+  verbs:
+  - '*'
+- apiGroups:
+  - batch
+  - extensions
+  resources:
+  - jobs
+  - cronjobs
+  verbs:
+  - '*'
+- apiGroups:
+  - autoscaling
+  resources:
+  - horizontalpodautoscalers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - management.apiconnect.ibm.com
+  resources:
+  - managementclusters
+  - managementclusters/status
+  - managementclusters/finalizers
+  - managementbackups
+  - managementbackups/status
+  - managementbackups/finalizers
+  - managementrestores
+  - managementrestores/status
+  - managementrestores/finalizers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - crunchydata.com
+  resources:
+  - pgbackups
+  - pgtasks
+  - pgclusters
+  - pgpolicies
+  - pgreplicas
+  verbs:
+  - '*'
+- apiGroups:
+  - nats.io
+  resources:
+  - natsclusters
+  - natsserviceroles
+  - natsclusters/finalizers
+  - natsserviceroles/finalizers
+  verbs:
+  - '*'
+- apiGroups:
+  - streaming.nats.io
+  resources:
+  - natsstreamingclusters
+  - natsstreamingclusters/finalizers
+  verbs:
+  - '*'
+- apiGroups:
+  - policy
+  resources:
+  - poddisruptionbudgets
+  verbs:
+  - '*'
+- apiGroups:
+  - networking.k8s.io
+  - extensions
+  resources:
+  - ingresses
+  - networkpolicies
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - serviceaccounts
+  - namespaces
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - roles
+  - rolebindings
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+  - bind
+  - escalate
+- apiGroups:
+  - certmanager.k8s.io
+  resources:
+  - certificates
+  - issuers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - certmanager.k8s.io
+  resources:
+  - clusterissuers
+  - certificaterequests
+  - challenges
+  - orders
+  verbs:
+  - list
+  - get
+  - watch
+- apiGroups:
+  - portal.apiconnect.ibm.com
+  resources:
+  - '*'
+  - portalclusters
+  - portalbackups
+  - portalrestores
+  - portalclusters/status
+  - portalclusters/finalizers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - analytics.apiconnect.ibm.com
+  resources:
+  - '*'
+  - analyticsbackups
+  - analyticsrestores
+  - analyticsclusters
+  - analyticsclusters/status
+  - analyticsclusters/finalizers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - gateway.apiconnect.ibm.com
+  - gatewayclusters
+  - gatewayclusters/status
+  - gatewayclusters/finalizers
+  resources:
+  - '*'
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - route.openshift.io
+  resources:
+  - routes
+  - routes/custom-host
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch 
+
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: ibm-apiconnect
+  namespace: apic
+subjects:
+- kind: ServiceAccount
+  name: ibm-apiconnect
+roleRef:
+  kind: Role
+  name: ibm-apiconnect
+  apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ibm-apiconnect
+  namespace: apic
+
+---

@@ -1,0 +1,42 @@
+apiVersion: analytics.apiconnect.ibm.com/v1beta1
+kind: AnalyticsCluster
+metadata:
+  name: analytics
+spec:
+  appVersion: 10.0.0.0
+  license:
+    accept: true
+    use: production
+  profile: n3xc4.m16
+  imagePullSecrets:
+  - apic-registry-secret
+  imageRegistry: 467519638150.dkr.ecr.ap-northeast-1.amazonaws.com
+  microServiceSecurity: certManager
+  certManagerIssuer:
+    name: selfsigning-issuer
+    kind: Issuer
+  client:
+    endpoint: 
+      annotations:
+        certmanager.k8s.io/issuer: ingress-issuer
+      hosts:
+      - name: ac.iks-dl.com
+        secretName: analytics-ac-endpoint
+    clientSubjectDN: CN=analytics-client-client,O=cert-manager
+  ingestion:
+    endpoint:
+      annotations:
+        certmanager.k8s.io/issuer: ingress-issuer
+      hosts: 
+      - name: ai.iks-dl.com
+        secretName: analytics-ai-endpoint
+    clientSubjectDN: CN=analytics-ingestion-client,O=cert-manager
+  storage:
+    data:
+      volumeClaimTemplate:
+        storageClassName: gp2
+        volumeSize: 200Gi
+    master:
+      volumeClaimTemplate:
+        storageClassName: gp2
+        volumeSize: 10Gi

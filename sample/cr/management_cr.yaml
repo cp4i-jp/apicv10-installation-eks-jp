@@ -1,0 +1,59 @@
+apiVersion: management.apiconnect.ibm.com/v1beta1
+kind: ManagementCluster
+metadata:
+  name: management
+spec:
+  appVersion: 10.0.0.0
+  imagePullSecrets:
+  - apic-registry-secret
+  imageRegistry: 467519638150.dkr.ecr.ap-northeast-1.amazonaws.com
+  profile: n3xc4.m16
+  portal:
+    admin:
+      secretName: portal-admin-client
+  analytics:
+    client:
+      secretName: analytics-client-client
+    ingestion:
+      secretName: analytics-ingestion-client
+  cloudManagerEndpoint:
+    annotations:
+      certmanager.k8s.io/issuer: ingress-issuer
+    hosts: 
+    - name: admin.iks-dl.com
+      secretName: cm-endpoint
+  apiManagerEndpoint:
+    annotations:
+      certmanager.k8s.io/issuer: ingress-issuer
+    hosts: 
+    - name: manager.iks-dl.com
+      secretName: apim-endpoint
+  platformAPIEndpoint:
+    annotations:
+      certmanager.k8s.io/issuer: ingress-issuer
+    hosts: 
+    - name: api.iks-dl.com
+      secretName: api-endpoint
+  consumerAPIEndpoint:
+    annotations:
+      certmanager.k8s.io/issuer: ingress-issuer
+    hosts: 
+    - name: consumer.iks-dl.com
+      secretName: consumer-endpoint
+  databaseVolumeClaimTemplate:
+    storageClassName: gp2
+    volumeSize: 200Gi
+  microServiceSecurity: certManager
+  certManagerIssuer:
+    name: selfsigning-issuer
+    kind: Issuer
+  license:
+    accept: true
+    use: production
+  databaseBackup:
+    credentials: mgmt-backup-secret-aws
+    host: s3-ap-northeast-1.amazonaws.com/ap-northeast-1
+    path: sbifi-apicv10test-ap-northeast-1/apim
+    retries: 0
+    s3provider: aws
+    schedule: 0 0 * * *

@@ -1,0 +1,47 @@
+apiVersion: portal.apiconnect.ibm.com/v1beta1
+kind: PortalCluster
+metadata:
+  name: portal
+spec:
+  appVersion: 10.0.0.0
+  profile: n3xc4.m8
+  imagePullSecrets:
+    - apic-registry-secret
+  imageRegistry: 467519638150.dkr.ecr.ap-northeast-1.amazonaws.com
+  portalAdminEndpoint:
+    annotations:
+      certmanager.k8s.io/issuer: ingress-issuer
+    hosts:
+    - name: api.portal.iks-dl.com
+      secretName: portal-admin
+  portalUIEndpoint:
+    annotations:
+      certmanager.k8s.io/issuer: ingress-issuer
+    hosts:
+    - name: portal.iks-dl.com
+      secretName: portal-web
+  databaseVolumeClaimTemplate:
+    storageClassName: gp2
+  databaseLogsVolumeClaimTemplate:
+    storageClassName: gp2
+  webVolumeClaimTemplate:
+    storageClassName: gp2
+  backupVolumeClaimTemplate:
+    storageClassName: gp2
+  adminVolumeClaimTemplate:
+    storageClassName: gp2
+  adminClientSubjectDN: CN=portal-admin-client,O=cert-manager
+  microServiceSecurity: certManager
+  certManagerIssuer:
+    name: selfsigning-issuer
+    kind: Issuer
+  license:
+    accept: true
+    use: production
+  portalBackup:
+    credentials: portal-backup-secret-aws
+    host: s3-ap-northeast-1.amazonaws.com/ap-northeast-1
+    path: sbifi-apicv10test-ap-northeast-1/portal
+    port: 443
+    protocol: objstore
+    schedule: 0 0 * * *

@@ -1,0 +1,32 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.kubernetes.io/ssl-passthrough: "true"
+    ingress.kubernetes.io/affinity: cookie
+    ingress.kubernetes.io/backend-protocol: HTTPS
+    ingress.kubernetes.io/secure-backends: "true"
+    ingress.kubernetes.io/session-cookie-hash: sha1
+    ingress.kubernetes.io/session-cookie-name: webui_session_route
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    nginx.ingress.kubernetes.io/affinity: cookie
+    nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+    nginx.ingress.kubernetes.io/secure-backends: "true"
+    nginx.ingress.kubernetes.io/session-cookie-hash: sha1
+    nginx.ingress.kubernetes.io/session-cookie-name: webui_session_route
+  labels:
+    app: gwv6-0-ing-webgui
+  name: gwv6-0-ing-webgui
+  namespace: apic
+spec:
+  rules:
+  - host: webgui0.iks-dl.com
+    http:
+      paths:
+      - backend:
+          serviceName: gwv6-0-svc-webgui
+          servicePort: 9090
+        path: /
+  tls:
+  - hosts:
+    - webgui0.iks-dl.com

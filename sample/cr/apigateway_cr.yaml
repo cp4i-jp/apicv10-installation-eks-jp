@@ -1,0 +1,49 @@
+apiVersion: gateway.apiconnect.ibm.com/v1beta1
+kind: GatewayCluster
+metadata:
+  name: gwv6
+spec:
+  appVersion: 10.0.0.0
+  profile: n3xc4.m8
+  imagePullSecrets:
+  - apic-registry-secret
+  imageRegistry: 467519638150.dkr.ecr.ap-northeast-1.amazonaws.com
+  apicGatewayServiceV5CompatibilityMode: false
+  gatewayEndpoint:
+    annotations:
+      certmanager.k8s.io/issuer: ingress-issuer
+    hosts:
+    - name: rgw.iks-dl.com
+      secretName: gwv6-endpoint
+  gatewayManagerEndpoint:
+    annotations:
+      certmanager.k8s.io/issuer: ingress-issuer
+    hosts:
+    - name: rgwd.iks-dl.com
+      secretName: gwv6-manager-endpoint
+  apicGatewayServiceTLS:
+    secretName: gateway-service
+  apicGatewayPeeringTLS:
+    secretName: gateway-peering
+  datapowerLogLevel: 3
+  license:
+    accept: true
+    use: production
+  tokenManagementService:
+    enabled: true
+    storage:
+      storageClassName: gp2
+      volumeSize: 30Gi
+  adminUser:
+    secretName: datapower-admin-credentials
+  # openTracing:
+  #   enabled: false # if true provide below details
+  #   odTracingRegistrationHostname: $OD_TRACING_REGISTRATION_HOSTNAME # must be a string
+  #   odTracingDataHostname: $OD_TRACING_HOSTNAME # must be a string
+  #   imageAgent: $AGENT_IMAGE # must be a string
+  #   imageCollector: $COLLECTOR_IMAGE # must be a string
+  syslogConfig:
+    enabled: false # if true, provide below details
+    # remoteHost: $DATAPOWER_SYSLOG_TCP_REMOTE_HOST # must be a string
+    # remotePort: $DATAPOWER_SYSLOG_TCP_REMOTE_PORT # must be an int
+    # secretName: $DATAPOWER_SYSLOG_TCP_TLS_SECRET # must be a string

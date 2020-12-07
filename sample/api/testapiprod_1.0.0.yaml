@@ -1,0 +1,29 @@
+info:
+  version: 1.0.0
+  title: TestAPIProd
+  name: testapiprod
+gateways:
+  - datapower-api-gateway
+plans:
+  default-plan:
+    rate-limits:
+      default:
+        value: 100/1hour
+    title: デフォルトのプラン
+    description: デフォルトのプラン
+    approval: false
+apis:
+  testapi1.0.0:
+    $ref: testapi_1.0.0.yaml
+visibility:
+  view:
+    type: public
+    orgs: []
+    tags: []
+    enabled: true
+  subscribe:
+    type: authenticated
+    orgs: []
+    tags: []
+    enabled: true
+product: 1.0.0
